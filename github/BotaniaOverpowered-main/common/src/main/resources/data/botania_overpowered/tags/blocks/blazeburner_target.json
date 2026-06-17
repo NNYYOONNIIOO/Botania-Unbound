@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    {
-      "id": "createdieselgenerators:distillation_tank",
-      "required": false
-    }
-  ]
-}
