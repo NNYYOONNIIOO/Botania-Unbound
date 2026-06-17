@@ -1,0 +1,170 @@
+key.toggleLiquids=Toggle Liquid View
+key.toggleVisible=Visibility Toggle
+key.categories.theoneprobe=The One Probe
+item.theoneprobe.probe.name=The One Probe
+item.theoneprobe.probe_goggles.name=The One Probe (Bauble)
+item.theoneprobe.diamond_helmet_probe.name=Diamond Helmet with Probe
+item.theoneprobe.gold_helmet_probe.name=Gold Helmet with Probe
+item.theoneprobe.iron_helmet_probe.name=Iron Helmet with Probe
+item.theoneprobe.creativeprobe.name=The Creative Probe
+item.theoneprobe.probenote.name=The One Probe Read Me
+
+itemGroup.Probe=The One Probe
+
+top.toolclass.Pickaxe=Pickaxe
+top.toolclass.Shovel=Shovel
+top.toolclass.Axe=Axe
+top.toolclass.Sword=Sword
+
+top.NoTool= No tool
+top.level=level
+
+top.Fuel=Fuel
+top.Time=Time
+top.Ticks=Ticks
+
+top.Mob=Mob
+
+top.Power=Power
+
+top.State=State
+top.On=on
+top.Off=off
+
+top.Mode=Mode
+
+top.Delay=Delay
+
+top.Looked=Looked
+
+top.Liquid=Liquid
+
+top.RF=RF
+top.TE=TE
+
+top.Fully_grown=Fully grown
+top.Growth=Growth
+
+top.Growing_Age=Growing Age
+
+top.Tot_armor=Tot armor
+top.Age=Age
+top.Absorption=Absorption
+top.AI_Move_Speed=AI Move Speed
+top.Revenge_Timer=Revenge Timer
+
+top.Reg_Name=Reg_Name
+top.Unlocname=Unlocname
+top.Meta=Meta
+top.Class=Class
+top.Hardness=Hardness
+top.Power_W=Power W
+top.Light=Light
+
+top.Health=Health
+top.Growing_time=Growing time
+top.Second=s
+top.Rotation=Rotation
+top.Empty=Empty
+
+top.Unknown_owner=Unknown_owner
+top.Owned_by=Owned by
+top.Tameable=Tameable
+
+top.Jump_height=Jump height
+top.Speed=Speed
+
+top.Collar=Collar
+
+top.Career=Career
+
+top.CareerLevel=Career Level
+top.CareerLevel.1=1
+top.CareerLevel.2=2
+top.CareerLevel.3=3
+top.CareerLevel.4=4
+top.CareerLevel.5=5
+top.CareerLevel.6=6
+top.CareerLevel.7=7
+top.CareerLevel.8=8
+top.CareerLevel.9=9
+top.CareerLevel.10=10
+
+top.Progress=Progress
+
+top.Waiting=Waiting for server...
+top.ErrorLog=Error (see log for details)!
+
+
+#  Example
+# "top.harvestLevel." + harvestLevel = Custom harvestLevel name
+#
+top.harvestLevel.null=Null
+top.harvestLevel.0=Stone
+top.harvestLevel.1=Iron
+top.harvestLevel.2=Diamond
+top.harvestLevel.3=Obsidian
+
+# mods
+
+top.bot.spark.dispersive=upgrade : dispersive
+top.bot.spark.dominant=upgrade : dominant
+top.bot.spark.recessive=upgrade : recessive
+top.bot.spark.isolated=upgrade : isolated
+
+top.aspects=Symbol:
+top.ash=Ash
+top.power=Ash Energy
+top.east.fluid=Fluid to the East
+top.west.fluid=Fluid to the West
+top.south.fluid=Fluid to the South
+top.north.fluid=Fluid to the North
+
+
+top.furnace_fuel=Smelts
+top.items=Items
+top.no_fuel=No Fuel
+top.growth_finished=Fully Grown
+top.growth=Growth:
+top.empty=Empty
+top.jukebox_record=Playing
+top.cauldron_fill_1=Bottle
+top.cauldron_fill_2=Bottles
+top.breeding_cooldown=Breeding Cooldown:
+top.tamed=Tamed
+top.not_tamed=Not Tamed
+top.sitting=Sitting
+top.standing=Standing
+top.tnt_fuse=Fuse:
+top.enchanting_power=Enchanting Power:
+top.chicken_egg=Egg Time:
+
+# units
+top.unit.ticks=Ticks
+
+# mod compat
+
+# dynamic trees
+top.dynamic_trees.soil_life=Soil Life:
+top.dynamic_trees.species=Species:
+
+# apotheosis
+top.apotheosis.delay=Delay:
+top.apotheosis.spawn_count=Spawn Count:
+top.apotheosis.max_nearby=Max Nearby:
+top.apotheosis.player_range=Player Range:
+top.apotheosis.spawn_range=Spawn Range:
+top.apotheosis.ignores_players=Ignores Players
+top.apotheosis.ignores_conditions=Ignores Spawn Conditions
+top.apotheosis.ignores_cap=Ignores Spawn Cap
+top.apotheosis.requires_redstone=Requires Redstone
+
+# projecte
+top.projecte.emc=EMC:
+top.projecte.contained_emc=Contained EMC:
+
+
+
+
+
+

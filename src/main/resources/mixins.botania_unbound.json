@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "package": "nyonio.botania_unbound.mixin",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinSubTileEntropinnyum",
+    "MixinSubTileNarslimmus",
+    "MixinSubTileEndoflame",
+    "MixinSubTileHydroangeas",
+    "MixinTileEnchanter",
+    "MixinBlockEnchanter",
+    "TilePylonAccessor",
+    "MixinItemTerraSword",
+    "MixinItemThunderSword",
+    "MixinItemStarSword",
+    "MixinEntityFallingStar",
+    "MixinEntityDoppleganger",
+    "MixinTilePylon",
+    "MixinBlockPylon",
+    "MixinSubTileGourmaryllis",
+    "MixinSubTileMunchdew",
+    "MixinSubTileSpectrolus",
+    "MixinSubTileArcaneRose",
+    "MixinSubTileRafflowsia",
+    "MixinSubTileKekimurus",
+    "MixinSubTileShulkMeNot",
+    "MixinSubTileDandelifeon",
+    "MixinTileCell",
+    "MixinEntityManaStorm",
+    "MixinLensStorm",
+    "MixinBlockManaBomb",
+    "MixinRenderManaStorm"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

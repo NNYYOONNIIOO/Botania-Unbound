@@ -1,0 +1,16 @@
+[
+{
+  "modid": "botania_unbound",
+  "name": "Botania Unbound",
+  "description": "Break the chains of balance. Restore mana's true power. Overpowered enhancements and full nerf reversal for Botania.",
+  "version": "1.0",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Nyonio"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["botania", "mixinbooter"]
+}
+]

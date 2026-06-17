@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "botania_overpowered",
+  "version": "${version}",
+  "name": "BotaniaOverpowered",
+  "description": "An addon of Botania about some enhancements / un-nerfs which are kind of overpowered.",
+  "authors": [
+    "YukkuriC"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/botaniaoverpowered",
+    "sources": "https://github.com/YukkuriC/BotaniaOverpowered",
+    "issues": "https://github.com/YukkuriC/BotaniaOverpowered/issues"
+  },
+  "license": "MIT",
+  "icon": "logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.yukkuric.botania_overpowered.fabric.BotaniaOPFabric"
+    ],
+    "client": [
+      "io.yukkuric.botania_overpowered.fabric.client.BotaniaOPFabricClient"
+    ]
+  },
+  "mixins": [
+    "botania_overpowered.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=17",
+    "fabric-api": "*",
+    "botania": "*"
+  }
+}
