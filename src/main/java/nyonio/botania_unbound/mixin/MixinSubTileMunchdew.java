@@ -1,5 +1,6 @@
 package nyonio.botania_unbound.mixin;
 
+import nyonio.botania_unbound.BotaniaCompat;
 import nyonio.botania_unbound.ModConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -58,9 +59,9 @@ public abstract class MixinSubTileMunchdew extends SubTileGenerating {
             // With noCooldown, still decrement but don't return - continue to eat leaves
         }
 
-        int manaPerLeaf = 160;
+        int manaPerLeaf = BotaniaCompat.MUNCHDEW_MANA;
         eatLeaves: {
-            if (getMaxMana() - mana >= manaPerLeaf && ticksExisted % 4 == 0) {
+            if (getMaxMana() - mana >= manaPerLeaf && ticksExisted % BotaniaCompat.MUNCHDEW_DELAY == 0) {
                 List<BlockPos> coords = new ArrayList<>();
                 BlockPos pos = supertile.getPos();
 

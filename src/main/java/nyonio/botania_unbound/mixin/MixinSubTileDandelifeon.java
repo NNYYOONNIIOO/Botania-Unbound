@@ -1,5 +1,6 @@
 package nyonio.botania_unbound.mixin;
 
+import nyonio.botania_unbound.BotaniaCompat;
 import nyonio.botania_unbound.DandelifeonState;
 import nyonio.botania_unbound.ICellNumberAccessor;
 import nyonio.botania_unbound.ModConfig;
@@ -22,9 +23,6 @@ import java.util.Random;
 
 @Mixin(value = SubTileDandelifeon.class, remap = false)
 public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
-
-    private static final int RANGE = 12;
-    private static final int MANA_PER_GEN = 60;
 
     /**
      * Overwrite onUpdate to support configurable cycle speed, skip on full mana, and reform mechanism.
@@ -75,8 +73,8 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
                     }
                 }
 
-                int xdist = Math.abs(i - RANGE);
-                int zdist = Math.abs(j - RANGE);
+                int xdist = Math.abs(i - BotaniaCompat.DANDELIFEON_RANGE);
+                int zdist = Math.abs(j - BotaniaCompat.DANDELIFEON_RANGE);
                 int allowDist = 1;
                 if (xdist <= allowDist && zdist <= allowDist && newVal > -1) {
                     gen = newVal;
@@ -92,7 +90,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
 
         BlockPos pos = supertile.getPos();
         for (int[] change : changes) {
-            BlockPos pos_ = pos.add(-RANGE + change[0], 0, -RANGE + change[1]);
+            BlockPos pos_ = pos.add(-BotaniaCompat.DANDELIFEON_RANGE + change[0], 0, -BotaniaCompat.DANDELIFEON_RANGE + change[1]);
             int val = change[2];
             if (val != -2 && wipe) val = -1;
             int old = change[3];
@@ -112,13 +110,13 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
         if (pushDir == null) return; // No valid redstone direction, don't run
 
         // Get cell number table (25x25)
-        int diam = RANGE * 2 + 1;
+        int diam = BotaniaCompat.DANDELIFEON_RANGE * 2 + 1;
         int[][] numTable = new int[diam][diam]; // 0 = no cell, >0 = cell number
         boolean[][] validCell = new boolean[diam][diam]; // true = belongs to this flower
 
         for (int i = 0; i < diam; i++) {
             for (int j = 0; j < diam; j++) {
-                BlockPos cellPos = flowerPos.add(-RANGE + i, 0, -RANGE + j);
+                BlockPos cellPos = flowerPos.add(-BotaniaCompat.DANDELIFEON_RANGE + i, 0, -BotaniaCompat.DANDELIFEON_RANGE + j);
                 TileEntity te = world.getTileEntity(cellPos);
                 if (te instanceof TileCell) {
                     TileCell cell = (TileCell) te;
@@ -188,7 +186,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
                         numTable[prevPos][j] = mergedNum;
                         merged[prevPos][j] = true;
                         // Produce mana: equivalent to吞噬 mergedNum 周期细胞
-                        int manaVal = Math.min(maxGen, mergedNum) * MANA_PER_GEN;
+                        int manaVal = Math.min(maxGen, mergedNum) * BotaniaCompat.DANDELIFEON_MANA;
                         totalMana += manaVal;
                         prevNum = 0;
                         prevPos = -1;
@@ -231,7 +229,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
                         int mergedNum = num + num;
                         numTable[i][prevPos] = mergedNum;
                         merged[i][prevPos] = true;
-                        int manaVal = Math.min(maxGen, mergedNum) * MANA_PER_GEN;
+                        int manaVal = Math.min(maxGen, mergedNum) * BotaniaCompat.DANDELIFEON_MANA;
                         totalMana += manaVal;
                         prevNum = 0;
                         prevPos = -1;
@@ -250,7 +248,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
         DandelifeonState.isDandelifeonRemoving = true;
         for (int i = 0; i < diam; i++) {
             for (int j = 0; j < diam; j++) {
-                BlockPos cellPos = flowerPos.add(-RANGE + i, 0, -RANGE + j);
+                BlockPos cellPos = flowerPos.add(-BotaniaCompat.DANDELIFEON_RANGE + i, 0, -BotaniaCompat.DANDELIFEON_RANGE + j);
                 if (validCell[i][j]) {
                     world.setBlockToAir(cellPos);
                 }
@@ -262,7 +260,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
         for (int i = 0; i < diam; i++) {
             for (int j = 0; j < diam; j++) {
                 if (numTable[i][j] > 0) {
-                    BlockPos cellPos = flowerPos.add(-RANGE + i, 0, -RANGE + j);
+                    BlockPos cellPos = flowerPos.add(-BotaniaCompat.DANDELIFEON_RANGE + i, 0, -BotaniaCompat.DANDELIFEON_RANGE + j);
                     IBlockState stateAt = world.getBlockState(cellPos);
                     if (stateAt.getBlock().isAir(stateAt, world, cellPos)) {
                         world.setBlockState(cellPos, ModBlocks.cellBlock.getDefaultState());
@@ -318,7 +316,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
         for (int i = 0; i < diam; i++) {
             for (int j = 0; j < diam; j++) {
                 if (numTable[i][j] == 0) {
-                    BlockPos cellPos = flowerPos.add(-RANGE + i, 0, -RANGE + j);
+                    BlockPos cellPos = flowerPos.add(-BotaniaCompat.DANDELIFEON_RANGE + i, 0, -BotaniaCompat.DANDELIFEON_RANGE + j);
                     IBlockState stateAt = world.getBlockState(cellPos);
                     if (stateAt.getBlock().isAir(stateAt, world, cellPos)) {
                         emptyPositions.add(new int[]{i, j});
@@ -330,7 +328,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
         if (!emptyPositions.isEmpty()) {
             Random rand = world.rand;
             int[] chosen = emptyPositions.get(rand.nextInt(emptyPositions.size()));
-            BlockPos cellPos = flowerPos.add(-RANGE + chosen[0], 0, -RANGE + chosen[1]);
+            BlockPos cellPos = flowerPos.add(-BotaniaCompat.DANDELIFEON_RANGE + chosen[0], 0, -BotaniaCompat.DANDELIFEON_RANGE + chosen[1]);
             world.setBlockState(cellPos, ModBlocks.cellBlock.getDefaultState());
             TileEntity te = world.getTileEntity(cellPos);
             if (te instanceof TileCell) {
@@ -351,7 +349,7 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
         TileEntity tile = world.getTileEntity(pos);
 
         if (gen == -2) {
-            int val = Math.min(maxGen, prevGen) * MANA_PER_GEN;
+            int val = Math.min(maxGen, prevGen) * BotaniaCompat.DANDELIFEON_MANA;
             if (ModConfig.dandelifeon.expandManaBuffer && mana + val > getMaxMana()) {
                 mana += val;
             } else {
@@ -375,12 +373,12 @@ public abstract class MixinSubTileDandelifeon extends SubTileGenerating {
     // ========== Helper methods (same as vanilla) ==========
 
     int[][] getCellTable() {
-        int diam = RANGE * 2 + 1;
+        int diam = BotaniaCompat.DANDELIFEON_RANGE * 2 + 1;
         int[][] table = new int[diam][diam];
         BlockPos pos = supertile.getPos();
         for (int i = 0; i < diam; i++)
             for (int j = 0; j < diam; j++) {
-                BlockPos pos_ = pos.add(-RANGE + i, 0, -RANGE + j);
+                BlockPos pos_ = pos.add(-BotaniaCompat.DANDELIFEON_RANGE + i, 0, -BotaniaCompat.DANDELIFEON_RANGE + j);
                 table[i][j] = getCellGeneration(pos_);
             }
         return table;

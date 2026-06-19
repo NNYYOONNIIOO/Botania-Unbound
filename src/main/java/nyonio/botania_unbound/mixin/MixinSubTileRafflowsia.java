@@ -1,5 +1,6 @@
 package nyonio.botania_unbound.mixin;
 
+import nyonio.botania_unbound.BotaniaCompat;
 import nyonio.botania_unbound.ModConfig;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -67,7 +68,7 @@ public abstract class MixinSubTileRafflowsia extends SubTileGenerating {
      */
     private int calculateManaOriginal() {
         float mod = ModConfig.rafflowsia.noDiminishingReturns ? 1F : 1F / lastFlowerTimes;
-        return (int) (2100 * mod);
+        return (int) (BotaniaCompat.RAFFLOWSIA_MANA * mod);
     }
 
     private int calculateMana(String flowerName) {
@@ -113,9 +114,9 @@ public abstract class MixinSubTileRafflowsia extends SubTileGenerating {
     public void onUpdate() {
         super.onUpdate();
 
-        int baseMana = ModConfig.rafflowsia.newManaFormula ? 0 : 2100;
+        int baseMana = ModConfig.rafflowsia.newManaFormula ? 0 : BotaniaCompat.RAFFLOWSIA_MANA;
 
-        if (!supertile.getWorld().isRemote && ticksExisted % 40 == 0) {
+        if (!supertile.getWorld().isRemote && ticksExisted % BotaniaCompat.RAFFLOWSIA_DELAY == 0) {
             // Check capacity - auto expand if configured
             if (ModConfig.rafflowsia.autoExpandCapacity || getMaxMana() - this.mana >= baseMana) {
                 // First: try to eat placed flower blocks (original behavior)
