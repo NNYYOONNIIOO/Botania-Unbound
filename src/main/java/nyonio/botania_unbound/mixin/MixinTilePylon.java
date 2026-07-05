@@ -19,6 +19,7 @@ import vazkii.botania.api.state.BotaniaStateProps;
 import vazkii.botania.api.state.enums.PylonVariant;
 import vazkii.botania.api.wand.IWandBindable;
 import vazkii.botania.common.Botania;
+import vazkii.botania.common.block.ModBlocks;
 import vazkii.botania.common.block.tile.TilePylon;
 
 import javax.annotation.Nullable;
@@ -40,7 +41,9 @@ public abstract class MixinTilePylon implements IWandBindable {
     private ModConfig.PylonVariantConfig getVariantConfig() {
         TilePylon self = (TilePylon) (Object) this;
         if (self.getWorld() == null) return ModConfig.pylonPump.mana;
-        PylonVariant variant = self.getWorld().getBlockState(self.getPos()).getValue(BotaniaStateProps.PYLON_VARIANT);
+        IBlockState state = self.getWorld().getBlockState(self.getPos());
+        if (state.getBlock() != ModBlocks.pylon) return ModConfig.pylonPump.mana;
+        PylonVariant variant = state.getValue(BotaniaStateProps.PYLON_VARIANT);
         switch (variant) {
             case NATURA: return ModConfig.pylonPump.natura;
             case GAIA:   return ModConfig.pylonPump.gaia;
@@ -260,7 +263,8 @@ public abstract class MixinTilePylon implements IWandBindable {
         TilePylon self = (TilePylon) (Object) this;
         if (bindPos == null) return;
 
-        net.minecraft.block.state.IBlockState state = self.getWorld().getBlockState(self.getPos());
+        IBlockState state = self.getWorld().getBlockState(self.getPos());
+        if (state.getBlock() != ModBlocks.pylon) return;
         PylonVariant variant = state.getValue(BotaniaStateProps.PYLON_VARIANT);
         ModConfig.PylonVariantConfig config = getVariantConfig();
 
