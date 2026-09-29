@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import vazkii.botania.api.state.BotaniaStateProps;
 import vazkii.botania.common.block.ModBlocks;
 import vazkii.botania.common.block.tile.TileEnchanter;
@@ -32,6 +33,8 @@ import vazkii.botania.common.network.PacketBotaniaEffect;
 import vazkii.botania.common.network.PacketHandler;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -43,20 +46,45 @@ public abstract class MixinTileEnchanter {
     @Shadow(remap = false) @Final private List<EnchantmentData> enchants;
     @Shadow(remap = false) public TileEnchanter.State stage;
     @Shadow(remap = false) private int stageTicks;
+    @Shadow(remap = false) private int stage3EndTicks;
     @Shadow(remap = false) private int manaRequired;
     @Shadow(remap = false) private int mana;
-    @Shadow(remap = false) private static final int CRAFT_EFFECT_EVENT = 0;
     @Shadow(remap = false) protected abstract boolean hasEnchantAlready(Enchantment enchant);
     @Shadow(remap = false) protected abstract void advanceStage();
     @Shadow(remap = false) protected abstract void sync();
-    @Shadow(remap = false) private void gatherMana(EnumFacing.Axis axis) {}
     @Shadow(remap = false) private static boolean canEnchanterExist(World world, BlockPos pos, EnumFacing.Axis axis) { return false; }
+
+    @Unique
+    private static final int BOTANIA_UNBOUND_CRAFT_FINISHED_EVENT = 0;
 
     // Define PYLON_LOCATIONS directly (same as in TileEnchanter)
     private static final Map<EnumFacing.Axis, BlockPos[]> PYLON_LOCATIONS = new EnumMap<>(EnumFacing.Axis.class);
     static {
         PYLON_LOCATIONS.put(EnumFacing.Axis.X, new BlockPos[] { new BlockPos(-5, 1, 0), new BlockPos(5, 1, 0), new BlockPos(-4, 1, 3), new BlockPos(4, 1, 3), new BlockPos(-4, 1, -3 ), new BlockPos(4, 1, -3) });
         PYLON_LOCATIONS.put(EnumFacing.Axis.Z, new BlockPos[] { new BlockPos(0, 1, -5), new BlockPos(0, 1, 5), new BlockPos(3, 1, -4), new BlockPos(3, 1, 4), new BlockPos(-3, 1, -4 ), new BlockPos(-3, 1, 4) });
+    }
+
+    /**
+     * Botania CEu changed gatherMana from void to boolean. Invoke the method
+     * without baking either private method descriptor into this mixin.
+     */
+    @Unique
+    private boolean botaniaUnbound$invokeGatherMana(EnumFacing.Axis axis) {
+        try {
+            Method method = TileEnchanter.class.getDeclaredMethod("gatherMana", EnumFacing.Axis.class);
+            method.setAccessible(true);
+            Object result = method.invoke((TileEnchanter) (Object) this, axis);
+            return !(result instanceof Boolean) || (Boolean) result;
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException)
+                throw (RuntimeException) cause;
+            if (cause instanceof Error)
+                throw (Error) cause;
+            throw new IllegalStateException("BotaniaUnbound could not invoke TileEnchanter.gatherMana", cause);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("BotaniaUnbound could not invoke TileEnchanter.gatherMana", e);
+        }
     }
 
     /**
@@ -155,7 +183,12 @@ public abstract class MixinTileEnchanter {
                 gatherEnchants();
                 break;
             case GATHER_MANA:
-                gatherMana(axis);
+                if (!botaniaUnbound$invokeGatherMana(axis)) {
+                    PacketHandler.sendToNearby(world, pos, new PacketBotaniaEffect(PacketBotaniaEffect.EffectType.ENCHANTER_DESTROY,
+                            pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5));
+                    stage = TileEnchanter.State.RESET;
+                    stage3EndTicks = stageTicks;
+                }
                 break;
             case DO_ENCHANT: {
                 if (stageTicks >= 100) {
@@ -188,7 +221,7 @@ public abstract class MixinTileEnchanter {
                     manaRequired = -1;
                     mana = 0;
 
-                    world.addBlockEvent(pos, ModBlocks.enchanter, CRAFT_EFFECT_EVENT, 0);
+                    world.addBlockEvent(pos, ModBlocks.enchanter, BOTANIA_UNBOUND_CRAFT_FINISHED_EVENT, 0);
                     advanceStage();
                 }
                 break;
@@ -238,7 +271,7 @@ public abstract class MixinTileEnchanter {
                 for (Map.Entry<Enchantment, Integer> entry : itemEnchants.entrySet()) {
                     Enchantment ench = entry.getKey();
                     int lvl = entry.getValue();
-                    if (ench == null || hasEnchantAlready(ench) || !isEnchantmentValid(ench)) continue;
+                    if (ench == null || hasEnchantAlready(ench) || !botaniaUnbound$isEnchantmentValid(ench)) continue;
                     this.enchants.add(new EnchantmentData(ench, lvl));
                     hasEnchantsThisItem = true;
                 }
@@ -264,8 +297,8 @@ public abstract class MixinTileEnchanter {
      * @reason Allow conflicting enchantments and book enchanting
      * @author nyonio
      */
-    @Overwrite
-    private boolean isEnchantmentValid(@Nullable Enchantment ench) {
+    @Unique
+    private boolean botaniaUnbound$isEnchantmentValid(@Nullable Enchantment ench) {
         if (ench == null) {
             return false;
         }
@@ -334,7 +367,7 @@ public abstract class MixinTileEnchanter {
                     if (enchants.tagCount() > 0) {
                         NBTTagCompound enchant = enchants.getCompoundTagAt(0);
                         short id = enchant.getShort("id");
-                        if (isEnchantmentValid(Enchantment.getEnchantmentByID(id))) {
+                        if (botaniaUnbound$isEnchantmentValid(Enchantment.getEnchantmentByID(id))) {
                             advanceStage();
                             return;
                         }
@@ -346,7 +379,7 @@ public abstract class MixinTileEnchanter {
                     Map<Enchantment, Integer> itemEnchants = EnchantmentHelper.getEnchantments(item);
                     for (Map.Entry<Enchantment, Integer> entry : itemEnchants.entrySet()) {
                         Enchantment ench = entry.getKey();
-                        if (ench != null && isEnchantmentValid(ench)) {
+                        if (ench != null && botaniaUnbound$isEnchantmentValid(ench)) {
                             advanceStage();
                             return;
                         }
